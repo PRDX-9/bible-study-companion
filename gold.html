@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="theme-color" content="#10141f" />
+<title>Your gold</title>
+
+<!-- Self-contained prototype of the gold ledger. It does not touch the live app.
+     The soul of the harness: catch the user's OWN lines fast, keep them apart,
+     watch them accumulate. Protects "His". Persists on the device via
+     localStorage for now; moves to the app's IndexedDB when wired in.
+     No haptics on iOS, so the catch is felt through motion. -->
+
+<style>
+  :root {
+    --bg: #10141f;
+    --surface: #1a2030;
+    --surface-2: #232b3d;
+    --text: #e8e6df;
+    --muted: #9aa0b0;
+    --gold: #d4a23c;
+    --parch: #f4ecd8;
+    --line: rgba(255, 255, 255, 0.08);
+    --danger: #d77;
+    --serif: Georgia, "Times New Roman", serif;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background:
+      radial-gradient(120% 50% at 50% -10%, rgba(212, 162, 60, 0.08), transparent 60%),
+      var(--bg);
+  }
+  button, textarea { font-family: inherit; color: inherit; }
+  button { cursor: pointer; touch-action: manipulation; }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  /* Header */
+  header {
+    flex: 0 0 auto;
+    padding: calc(env(safe-area-inset-top) + 22px) 24px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--parch);
+  }
+  .count {
+    margin-top: 4px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--gold);
+    opacity: 0.85;
+  }
+
+  /* The ledger */
+  .ledger {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 18px 8px;
+  }
+
+  .empty {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 16px;
+    padding: 0 26px 8vh;
+    color: var(--muted);
+  }
+  .empty .mark {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--gold); opacity: 0.6;
+  }
+  .empty p { font-family: var(--serif); font-size: 19px; line-height: 1.5; color: var(--text); max-width: 20ch; }
+  .empty span { font-size: 14px; }
+
+  .card {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 18px 14px 20px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+  /* The gold seam: this line is treasure. */
+  .card::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 12px; bottom: 12px;
+    width: 3px; border-radius: 3px;
+    background: var(--gold); opacity: 0.7;
+  }
+  .card .text {
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.45;
+    color: var(--parch);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .card .when {
+    margin-top: 10px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+  /* Caught: the line settles in from the top. The motion is the reward. */
+  .card.caught { animation: settle 0.5s var(--ease); }
+  @keyframes settle {
+    from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+  }
+  /* Swiping left to remove reveals a red edge. */
+  .card.swiping { border-color: rgba(221, 119, 119, 0.5); }
+  .card.removing { animation: leave 0.28s var(--ease) forwards; }
+  @keyframes leave {
+    to { opacity: 0; transform: translateX(-120%); height: 0; margin: 0; padding-top: 0; padding-bottom: 0; }
+  }
+
+  /* Capture bar */
+  .capture {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 12px 16px calc(env(safe-area-inset-bottom) + 14px);
+    border-top: 1px solid var(--line);
+    background: rgba(16, 20, 31, 0.92);
+    backdrop-filter: blur(8px);
+  }
+  .capture textarea {
+    flex: 1 1 auto;
+    resize: none;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size: 16px;
+    line-height: 1.4;
+    color: var(--text);
+    max-height: 38vh;
+    min-height: 46px;
+  }
+  .capture textarea::placeholder { color: var(--muted); }
+  .capture textarea:focus { outline: none; border-color: rgba(212, 162, 60, 0.4); }
+  .add {
+    flex: 0 0 auto;
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    border: none;
+    background: var(--gold);
+    color: #1a1407;
+    font-size: 26px;
+    line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.15s var(--ease), filter 0.15s var(--ease);
+  }
+  .add:disabled { filter: grayscale(0.6) brightness(0.7); }
+  .add:not(:disabled):active { transform: scale(0.9); filter: brightness(0.92); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card.caught, .card.removing { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Your gold</h1>
+    <div class="count" id="count">Your own words. Caught and kept.</div>
+  </header>
+
+  <div class="ledger" id="ledger"></div>
+
+  <div class="capture">
+    <textarea id="input" rows="1" placeholder="catch a line…" autocomplete="off"></textarea>
+    <button class="add" id="add" disabled aria-label="Catch this line">+</button>
+  </div>
+</div>
+
+<script>
+  var KEY = "bsc-gold-prototype";
+  var ledgerEl = document.getElementById("ledger");
+  var countEl = document.getElementById("count");
+  var input = document.getElementById("input");
+  var addBtn = document.getElementById("add");
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || []; }
+    catch (e) { return []; }
+  }
+  function save(items) { localStorage.setItem(KEY, JSON.stringify(items)); }
+
+  var gold = load();
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  // Relative time so the ledger feels like it grows over time.
+  function fmtWhen(ts) {
+    var s = Math.floor((Date.now() - ts) / 1000);
+    if (s < 45) return "just now";
+    if (s < 3600) return Math.floor(s / 60) + "m ago";
+    if (s < 86400) return Math.floor(s / 3600) + "h ago";
+    var d = new Date(ts);
+    return d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+  }
+
+  function updateCount() {
+    var n = gold.length;
+    countEl.textContent = n === 0
+      ? "Your own words. Caught and kept."
+      : n + (n === 1 ? " line kept" : " lines kept");
+  }
+
+  function cardHtml(item) {
+    return '<div class="text">' + escapeHtml(item.text) + '</div>' +
+           '<div class="when">' + fmtWhen(item.ts) + '</div>';
+  }
+
+  function render() {
+    updateCount();
+    if (gold.length === 0) {
+      ledgerEl.innerHTML =
+        '<div class="empty">' +
+          '<div class="mark"></div>' +
+          '<p>When a line comes that is yours, catch it here.</p>' +
+          '<span>The ones worth keeping. Your revelation, in your words.</span>' +
+        '</div>';
+      return;
+    }
+    ledgerEl.innerHTML = "";
+    // Newest first, so a caught line lands at the top.
+    gold.slice().reverse().forEach(function (item) {
+      var card = document.createElement("div");
+      card.className = "card";
+      card.dataset.id = item.id;
+      card.innerHTML = cardHtml(item);
+      attachSwipe(card, item.id);
+      ledgerEl.appendChild(card);
+    });
+  }
+
+  function catchLine() {
+    var text = input.value.trim();
+    if (!text) return;
+    var item = { id: Date.now() + "-" + Math.random().toString(36).slice(2, 7), text: text, ts: Date.now() };
+    gold.push(item);
+    save(gold);
+    input.value = "";
+    autoGrow();
+    addBtn.disabled = true;
+    render();
+    // Mark the top card as freshly caught so it settles in.
+    var top = ledgerEl.querySelector(".card");
+    if (top) top.classList.add("caught");
+    ledgerEl.scrollTop = 0;
+  }
+
+  function removeLine(id) {
+    gold = gold.filter(function (g) { return g.id !== id; });
+    save(gold);
+  }
+
+  // Swipe a card left to remove. Gold is precious, so confirm before it goes.
+  function attachSwipe(card, id) {
+    var startX = 0, dx = 0, active = false;
+    card.addEventListener("touchstart", function (e) {
+      startX = e.touches[0].clientX; dx = 0; active = true;
+      card.style.transition = "none";
+    }, { passive: true });
+    card.addEventListener("touchmove", function (e) {
+      if (!active) return;
+      dx = e.touches[0].clientX - startX;
+      if (dx > 0) dx = 0;
+      card.style.transform = "translateX(" + dx + "px)";
+      card.classList.toggle("swiping", dx < -30);
+    }, { passive: true });
+    card.addEventListener("touchend", function () {
+      active = false;
+      card.style.transition = "transform 0.2s var(--ease)";
+      card.classList.remove("swiping");
+      if (dx < -70) {
+        if (confirm("Remove this line?")) {
+          card.classList.add("removing");
+          card.addEventListener("animationend", function () { removeLine(id); render(); }, { once: true });
+          return;
+        }
+      }
+      card.style.transform = "";
+    });
+  }
+
+  function autoGrow() {
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, window.innerHeight * 0.38) + "px";
+  }
+
+  input.addEventListener("input", function () {
+    addBtn.disabled = input.value.trim().length === 0;
+    autoGrow();
+  });
+  addBtn.addEventListener("click", catchLine);
+
+  render();
+</script>
+</body>
+</html>
