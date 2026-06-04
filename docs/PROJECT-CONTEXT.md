@@ -119,6 +119,56 @@ It competes on a different axis. Not library size. Not reach. Intimacy and proce
 - **Aesthetic.** The He Reads Truth standard is typography, whitespace, restraint, and strong imagery. All achievable with the current stack. No framework or build step required. Maps and infographics are static assets, made or sourced public domain.
 - **Context content is the real work.** Book level who, when, and why is sourceable from public domain material. Per passage context and teaching maps are curation, not a download. This is where the genuine effort goes, and where the app earns the gap the others leave.
 
+### 4.7 The app is a harness
+
+The app does not need to be intelligent. It needs to make borrowed intelligence reliable. Claude can already produce a sound, clear word. The reference session proves it (`reference-session-strength-for-the-stretch.md`). The problem is that it only happens when the right questions are asked in the right order, it sprawls, and it differs every time. Brilliance once is not the goal. Brilliance every time, fast, is. The app is the harness that makes the process run the same excellent way every time.
+
+The app is the desk and the frame. Claude is the engine it drives. This is why it works on a single user budget with no paid API: the value is the harness, not the intelligence. The app builds the prompt, the user runs it through the Claude he already pays for, the app captures the result back into the structure. See the AI and budget path in 4.6.
+
+The harness holds three things a raw chat cannot:
+
+- **The spine.** The proven study sequence, made visible, moved along in order so nothing is skipped.
+- **The gold ledger.** A first class place that captures the user's own words and lines as they appear, kept separate, so his revelation accumulates where he can see it. No other Bible tool has this. It is what protects "His".
+- **The steer.** At each step the app hands the user the right prompt to take to Claude, then catches what returns.
+
+The proven spine, drawn from the reference session:
+
+1. Excavate the raw heart, unfiltered.
+2. Find the thesis. Catch the one line that is the heartbeat.
+3. Set the anchor and the case it builds.
+4. Per passage: context (who, to whom, placement, immediate verses, key original words), original language sparingly, first mention where it earns its place, develop the user's own insight by testing it against the text, connect to the through line.
+5. Gather illustrations from the user's world.
+6. Build the close. The examination questions.
+7. Shape into a flowing word in the user's voice.
+8. Refine to the least words.
+9. Pray. The user's.
+
+Two constants run under every step: the reflect and sharpen loop (receive a raw thought, reflect it back clean, name the thread, sharpen, ask one question, wait), and the gold ledger.
+
+### 4.8 The standard: Sound, Clear, His, Fast
+
+A prepared word is excellent when it is:
+
+- **Sound.** Grounded in correct handling of the text. The doctrine holds.
+- **Clear.** The hearer receives it plainly. It lands in the room.
+- **His.** It carries the user's voice, revelation, and illustrations. The fingerprints are his.
+- **Fast.** Produced in the shortest time that still passes the first three.
+
+Order matters. Fast is the servant, never the master. Speed is the pressure that kills ownership, because the quickest path to a sound, clear word is to let the machine write all of it. "His" stands guard over "Fast". If raw speed ever competes with sound, clear, or his, the first three win.
+
+Every feature answers to this standard. If a feature does not make a word more sound, more clear, more his, or faster to reach without weakening the others, it is the wrong feature.
+
+The measures are gates at the relevant step, not a vibe:
+
+- Sound is checked while studying each passage. Is every claim grounded in the text.
+- His is checked at the gold ledger and again at shaping. Is each line the user's or the machine's.
+- Clear is checked at refine. Least words, declarative, the illustration carrying the weight.
+- Fast is the clock across the run, allowed to push only after the other gates pass.
+
+Resonance (whether the word moves the room, not only whether it is understood) is held as a question, not a fifth rule. It is mostly what results when a word is truly his and truly clear. It earns its own line only if words that are sound, clear, his, and fast still come out flat.
+
+The two modes are measured differently. The preparation standard is Sound, Clear, His, Fast. A devotion is measured by formation: did the user meet God, were they changed, do they know how to live it now. Neither standard bends the other.
+
 ---
 
 ## 5. Voice and Output Requirements

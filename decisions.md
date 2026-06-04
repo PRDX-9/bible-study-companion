@@ -4,6 +4,18 @@ An append-only record of the calls that shape this project, and why. Newest at t
 
 ---
 
+## 2026-06-05 — The app is a harness; the standard is Sound, Clear, His, Fast
+
+**Decision.** The app is a harness around borrowed intelligence, not an intelligent app. Claude (the user's existing subscription) is the engine. The app is the frame that makes the leading run the same excellent way every time: a visible study spine, a gold ledger that captures the user's own words, and per step prompts that steer his Claude. This is what makes it work on a single user budget with no paid API.
+
+**The standard.** A prepared word is excellent when it is **Sound** (the doctrine holds), **Clear** (the hearer receives it), **His** (his voice, revelation, illustrations), and **Fast** (the shortest time that still passes the first three). Fast is the servant. "His" guards against speed eating ownership. Every feature answers to this standard. The measures are gates at the relevant step, not a score. Devotion is measured differently: formation, not the four.
+
+**Why.** Brilliance once is not the goal. Brilliance every time, fast, is. The reference session (`docs/reference-session-strength-for-the-stretch.md`) proved Claude can do this, but only with the right questions in the right order, sprawling and inconsistent. The harness makes it reliable. "His" is the moat and the philosophy (excavate, not dictate) made measurable. It is also the measure most at risk from optimising for speed.
+
+**Consequence.** Build the gold ledger and the reflect-and-sharpen loop first. Both rooms stand on them. Full detail in `docs/PROJECT-CONTEXT.md` sections 4.7 and 4.8.
+
+---
+
 ## 2026-06-04 — Pivot from a notes app to a guided companion
 
 **Decision.** The app stops being a flat collection of notes and passages. It becomes a guided study companion. The core object is the **Study**: a single journey around a theme or passage that holds its own notes, passages, word studies, links, and through line. The study workflow becomes the spine, and study principles (first mention, original language, context) surface through progressive disclosure, calm by default with depth one tap away. The app runs two modes on one engine: devotional (formation) and preparation (a word for others).
