@@ -75,6 +75,7 @@ button {
   min-height: 100%;
 }
 .view { padding: 12px 14px; }
+.view-actions { margin-bottom: 12px; }
 .hidden { display: none !important; }
 
 .list { display: flex; flex-direction: column; gap: 10px; }

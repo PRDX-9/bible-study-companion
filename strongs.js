@@ -27,8 +27,8 @@
   async function loadData() {
     if (!dataPromise) {
       dataPromise = Promise.all([
-        fetch('./data/strongs-hebrew.json?v=4').then((r) => r.json()),
-        fetch('./data/strongs-greek.json?v=4').then((r) => r.json()),
+        fetch('./data/strongs-hebrew.json?v=5').then((r) => r.json()),
+        fetch('./data/strongs-greek.json?v=5').then((r) => r.json()),
       ]).then(([hebrew, greek]) => ({ hebrew, greek, all: Object.assign({}, hebrew, greek) }));
     }
     return dataPromise;

@@ -15,7 +15,7 @@
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
 
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="stylesheet" href="styles.css?v=4" />
+  <link rel="stylesheet" href="styles.css?v=5" />
 </head>
 <body>
   <header class="app-header">
@@ -32,8 +32,25 @@
 
     <!-- Passages view -->
     <section class="view hidden" id="view-passages">
+      <div class="view-actions">
+        <button class="btn ghost" id="passagesWordStudy">Word Study</button>
+      </div>
       <div class="list" id="passagesList"></div>
       <p class="empty" id="passagesEmpty">No passages yet. Add one, or tag a note with a passage.</p>
+    </section>
+
+    <!-- Word Study view -->
+    <section class="view hidden" id="view-study">
+      <label class="field">
+        <span class="lbl">Word or Strong's number</span>
+        <input class="text" id="studyStrongsQuery" placeholder="e.g. H6960, G26, agape" autocapitalize="none" />
+      </label>
+      <button class="btn primary" id="studyStrongsSearch">Look up word</button>
+      <div class="detail-section" id="studyStrongsResults">
+        <p class="mini">Search by Strong's number, Greek word, Hebrew word, or transliteration.</p>
+      </div>
+      <div class="divider"></div>
+      <p class="mini">Strong's gives a starting point. Check context before drawing a conclusion.</p>
     </section>
   </main>
 
@@ -46,15 +63,18 @@
     <button class="tab" data-view="passages">
       <span class="tab-label">Passages</span>
     </button>
+    <button class="tab" data-view="study">
+      <span class="tab-label">Word Study</span>
+    </button>
   </nav>
 
   <!-- Sheet host -->
   <div class="sheet-backdrop hidden" id="sheetBackdrop"></div>
   <div class="sheet hidden" id="sheet" role="dialog" aria-modal="true"></div>
 
-  <script src="db.js?v=4"></script>
-  <script src="books.js?v=4"></script>
-  <script src="strongs.js?v=4"></script>
-  <script src="app.js?v=4"></script>
+  <script src="db.js?v=5"></script>
+  <script src="books.js?v=5"></script>
+  <script src="strongs.js?v=5"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>

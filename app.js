@@ -295,8 +295,7 @@ function renderStrongEntry(entry) {
     </div>`;
 }
 
-function renderStrongResults(results, query) {
-  const host = $('#strongsResults');
+function renderStrongResults(host, results, query) {
   if (!query) {
     host.innerHTML = '<p class="mini">Search by Strong\'s number, Greek word, Hebrew word, or transliteration.</p>';
     return;
@@ -308,9 +307,36 @@ function renderStrongResults(results, query) {
   host.innerHTML = results.map(renderStrongEntry).join('');
 }
 
+function attachStrongLookup(inputSel, buttonSel, resultsSel) {
+  const input = $(inputSel);
+  const button = $(buttonSel);
+  const host = $(resultsSel);
+  if (!input || !button || !host) return;
+
+  async function search() {
+    const query = input.value.trim();
+    if (!query) { renderStrongResults(host, [], ''); return; }
+    host.innerHTML = '<p class="mini">Looking up word...</p>';
+    try {
+      const results = await STRONGS.lookup(query);
+      renderStrongResults(host, results, query);
+    } catch (_) {
+      host.innerHTML = '<p class="mini">Could not load the dictionary.</p>';
+    }
+  }
+
+  button.addEventListener('click', search);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') search();
+  });
+}
+
 async function openWordStudySheet(passage) {
+  const context = passage
+    ? ` for ${escapeHtml(passage.ref)}`
+    : '';
   const body = `
-    <p class="mini">Look up a Strong's number or original word for ${escapeHtml(passage.ref)}.</p>
+    <p class="mini">Look up a Strong's number or original word${context}.</p>
     <label class="field">
       <span class="lbl">Word or Strong's number</span>
       <input class="text" id="strongsQuery" placeholder="e.g. H6960, G26, agape" autocapitalize="none" />
@@ -322,24 +348,7 @@ async function openWordStudySheet(passage) {
     <div class="divider"></div>
     <p class="mini">Strong's gives a starting point. Check context before drawing a conclusion.</p>`;
   openSheet('Word Study', body);
-
-  async function search() {
-    const query = $('#strongsQuery').value.trim();
-    const host = $('#strongsResults');
-    if (!query) { renderStrongResults([], ''); return; }
-    host.innerHTML = '<p class="mini">Looking up word...</p>';
-    try {
-      const results = await STRONGS.lookup(query);
-      renderStrongResults(results, query);
-    } catch (_) {
-      host.innerHTML = '<p class="mini">Could not load the dictionary.</p>';
-    }
-  }
-
-  $('#strongsSearch').addEventListener('click', search);
-  $('#strongsQuery').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') search();
-  });
+  attachStrongLookup('#strongsQuery', '#strongsSearch', '#strongsResults');
 }
 
 async function openPrefilledNote(passage) {
@@ -423,7 +432,7 @@ async function openSettings() {
     <label class="btn ghost" for="importFile" style="text-align:center">Restore from a backup</label>
     <input type="file" id="importFile" accept="application/json" style="display:none" />
     <div class="divider"></div>
-    <p class="mini">Version 1 (Phase 1). Notes, passage tags, and links.</p>`;
+    <p class="mini">Version 2. Word Study is available from the bottom tab and passage details.</p>`;
   openSheet('Settings', body);
 
   $('#exportBtn').addEventListener('click', async () => {
@@ -461,6 +470,8 @@ function switchView(view) {
   currentView = view;
   $('#view-notes').classList.toggle('hidden', view !== 'notes');
   $('#view-passages').classList.toggle('hidden', view !== 'passages');
+  $('#view-study').classList.toggle('hidden', view !== 'study');
+  $('#fab').classList.toggle('hidden', view === 'study');
   document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t.dataset.view === view));
 }
 
@@ -479,6 +490,8 @@ function wire() {
     else openNewPassageSheet();
   });
   $('#settingsBtn').addEventListener('click', openSettings);
+  $('#passagesWordStudy').addEventListener('click', () => openWordStudySheet(null));
+  attachStrongLookup('#studyStrongsQuery', '#studyStrongsSearch', '#studyStrongsResults');
   $('#sheetBackdrop').addEventListener('click', closeSheet);
 }
 

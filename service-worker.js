@@ -1,17 +1,17 @@
 /* Offline support: cache the app shell so it opens with no internet.
  * Notes are not cached here. They live in IndexedDB on the device. */
 
-const CACHE = 'bsc-v4';
+const CACHE = 'bsc-v5';
 const ASSETS = [
   './',
   './index.html',
-  './styles.css?v=4',
-  './app.js?v=4',
-  './db.js?v=4',
-  './books.js?v=4',
-  './strongs.js?v=4',
-  './data/strongs-hebrew.json?v=4',
-  './data/strongs-greek.json?v=4',
+  './styles.css?v=5',
+  './app.js?v=5',
+  './db.js?v=5',
+  './books.js?v=5',
+  './strongs.js?v=5',
+  './data/strongs-hebrew.json?v=5',
+  './data/strongs-greek.json?v=5',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
