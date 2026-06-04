@@ -269,6 +269,28 @@ select.text { appearance: none; }
   color: var(--parch);
 }
 
+.strongs-card { margin-bottom: 10px; }
+.strongs-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+.strongs-lemma {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--parch);
+  text-align: right;
+  word-break: break-word;
+}
+.strongs-def {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  margin: 10px 0 0;
+}
+
 /* Book auto-complete dropdown */
 .ac-wrap { position: relative; display: block; }
 .ac-list {

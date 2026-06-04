@@ -249,6 +249,7 @@ async function openPassageSheet(passage) {
   const body = `
     <button class="btn ghost" id="addNoteHere">Add a note on this passage</button>
     <button class="btn ghost" id="linkPassage">Link to another passage</button>
+    <button class="btn ghost" id="wordStudy">Word Study</button>
 
     <div class="detail-section">
       <h3>Notes</h3>
@@ -268,12 +269,76 @@ async function openPassageSheet(passage) {
   });
 
   $('#linkPassage').addEventListener('click', () => openLinkSheet(passage));
+  $('#wordStudy').addEventListener('click', () => openWordStudySheet(passage));
 
   $('#deletePassage').addEventListener('click', async () => {
     if (!confirm('Delete this passage? Notes attached to it will lose their tag, and its links will be removed.')) return;
     await deletePassageCascade(passage.id);
     closeSheet();
     await refresh();
+  });
+}
+
+function renderStrongEntry(entry) {
+  const derivation = entry.derivation ? `<p class="mini"><strong>Derived from:</strong> ${escapeHtml(entry.derivation)}</p>` : '';
+  const kjv = entry.kjv ? `<p class="mini"><strong>KJV renderings:</strong> ${escapeHtml(entry.kjv)}</p>` : '';
+  return `
+    <div class="card strongs-card">
+      <div class="strongs-head">
+        <span class="tag">${escapeHtml(entry.number)} ${escapeHtml(entry.language)}</span>
+        <span class="strongs-lemma">${escapeHtml(entry.lemma)}</span>
+      </div>
+      <p class="mini">${escapeHtml(entry.transliteration)}${entry.pronunciation ? `, ${escapeHtml(entry.pronunciation)}` : ''}</p>
+      <p class="strongs-def">${escapeHtml(entry.definition) || '<span class="mini">(no definition)</span>'}</p>
+      ${derivation}
+      ${kjv}
+    </div>`;
+}
+
+function renderStrongResults(results, query) {
+  const host = $('#strongsResults');
+  if (!query) {
+    host.innerHTML = '<p class="mini">Search by Strong\'s number, Greek word, Hebrew word, or transliteration.</p>';
+    return;
+  }
+  if (!results.length) {
+    host.innerHTML = '<p class="mini">No entry found.</p>';
+    return;
+  }
+  host.innerHTML = results.map(renderStrongEntry).join('');
+}
+
+async function openWordStudySheet(passage) {
+  const body = `
+    <p class="mini">Look up a Strong's number or original word for ${escapeHtml(passage.ref)}.</p>
+    <label class="field">
+      <span class="lbl">Word or Strong's number</span>
+      <input class="text" id="strongsQuery" placeholder="e.g. H6960, G26, agape" autocapitalize="none" />
+    </label>
+    <button class="btn primary" id="strongsSearch">Look up word</button>
+    <div class="detail-section" id="strongsResults">
+      <p class="mini">Search by Strong's number, Greek word, Hebrew word, or transliteration.</p>
+    </div>
+    <div class="divider"></div>
+    <p class="mini">Strong's gives a starting point. Check context before drawing a conclusion.</p>`;
+  openSheet('Word Study', body);
+
+  async function search() {
+    const query = $('#strongsQuery').value.trim();
+    const host = $('#strongsResults');
+    if (!query) { renderStrongResults([], ''); return; }
+    host.innerHTML = '<p class="mini">Looking up word...</p>';
+    try {
+      const results = await STRONGS.lookup(query);
+      renderStrongResults(results, query);
+    } catch (_) {
+      host.innerHTML = '<p class="mini">Could not load the dictionary.</p>';
+    }
+  }
+
+  $('#strongsSearch').addEventListener('click', search);
+  $('#strongsQuery').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') search();
   });
 }
 
