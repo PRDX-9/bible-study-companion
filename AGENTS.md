@@ -14,7 +14,7 @@ A personal, phone-first Bible study app for one user (Unathi). It helps him prep
 2. **No build step, no framework, no dependencies.** Plain HTML, CSS, and vanilla JavaScript served as static files. Do not add npm, bundlers, React, or a package.json unless the user explicitly decides to. Simplicity is a feature.
 3. **Single user.** No auth, no roles, no sharing. Build for one.
 4. **Respect the philosophy.** If a feature risks making study lazy or shallow, it is the wrong feature. Support, never substitute.
-5. **Follow the voice and writing rules** in `docs/PROJECT-CONTEXT.md` section 4 for any user-facing text and any generated word: UK spelling, avoid dashes, short declarative sentences, concise.
+5. **Follow the voice and writing rules** in `docs/PROJECT-CONTEXT.md` section 5 for any user-facing text and any generated word: UK spelling, avoid dashes, short declarative sentences, concise.
 
 ## Architecture
 
@@ -75,7 +75,9 @@ The Settings sheet (gear icon) exports all data as JSON and restores from it. Ex
 ## Current status
 
 - **Phase 1: DONE and verified on the user's iPhone on 2026-06-04.** Notes, passage tags, links, on-device persistence, backup export/restore, book auto-complete, swipe-to-delete. Installed as a home-screen PWA.
-- **Next: Phase 2 — language study.** Original language lookup (open-source Strong's plus open Hebrew/Greek morphology), root words, principle of first mention. Confirm scope with the user before building. Use only open/public-domain language data; do not embed copyrighted translations (see `docs/PROJECT-CONTEXT.md` section 6).
+- **Direction agreed 2026-06-04: the app pivots from a notes app to a guided companion.** Read `docs/PROJECT-CONTEXT.md` section 4 (The Experience Blueprint) before building anything new. The core object becomes the **Study**, the workflow becomes the spine, and study principles surface through progressive disclosure (calm by default, depth one tap away). Two modes on one engine: devotional and preparation.
+- **Next: Phase 1.5 — the experience restructure.** Introduce the Study object, rebuild the home around Studies, design the empty state and re-entry, and build the progressive-disclosure shell. See section 6, Phase 1.5.
+- **Then Phase 2 — language study.** A word study lookup already ships. Deepen it (open-source Strong's plus open Hebrew/Greek morphology, root words, first mention) and integrate it as a door inside the Study flow rather than a separate dictionary. Add book/passage context with visible sources. Use only open/public-domain language data; do not embed copyrighted translations (see `docs/PROJECT-CONTEXT.md` section 7).
 
 ## Decisions and why (so a returning agent does not relitigate them)
 

@@ -46,7 +46,82 @@ This workflow is the real blueprint. It is the exact process that produces a str
 
 ---
 
-## 4. Voice and Output Requirements
+## 4. The Experience Blueprint
+
+> How the philosophy and the workflow become an app the user walks, not a tool the user operates. This is the north star for every build decision from here.
+
+### 4.1 Two modes, one engine
+
+The app serves two intents that share the same machinery.
+
+- **Devotional mode.** The user meets God and themselves. The session ends with them knowing how to live differently. The fruit is formation.
+- **Preparation mode.** The user builds a word to teach or preach. The session ends with a grounded, structured message in their voice. The fruit is a word for others.
+
+The engine underneath is the same: capture, context, original language, connections, prayer. The path and the ending differ. The home screen lets the user say which they are doing today, or infers it and stays quiet.
+
+### 4.2 The Study is the core object
+
+The app is organised around Studies, not loose notes. A Study is a single journey around a theme or a passage. It holds its own notes, passages, word studies, connections, and through line. The user names it. "Strength for the Stretch" is one Study.
+
+This replaces the flat list. Notes no longer float. They live inside the Study they belong to. The Study is the folder the user chooses. The Study is also the unit Phase 3 formats into a word.
+
+This is the foundation, not a preference:
+
+- It matches how revelation forms. A word builds over days, across passages. The container is shaped like the real thing.
+- It makes the workflow real. The eleven steps stop being a document and become the spine the user walks.
+- It gives progressive disclosure a home. Because the Study knows which step the user is on, the app knows which door to offer.
+
+### 4.3 Progressive disclosure: calm by default, depth one tap away
+
+The app never shows every tool at once. It shows the next meaningful thing for where the user is. The study principles appear as quiet offers at the exact moment they matter, then step back.
+
+When each door appears:
+
+| Workflow moment | The offer that appears |
+|---|---|
+| Anchor passage set | "Want the background. Who wrote this, when, and to whom." |
+| A word carries weight | "This word is deeper in the original. Look." One line of Greek or Hebrew, then gone. |
+| A key word is in focus | "This word first appears in Genesis. Trace it to its root." (first mention) |
+| Two passages in play | "These may connect. Build the through line." |
+| Notes are gathering | "Ready to shape this into a word." (enters the Phase 3 flow) |
+
+The user never meets a menu of seven features. The user meets a path with doors. The depth is always available and never in the way. The app decides when the door appears. It never decides whether the user goes deep.
+
+### 4.4 The surfaces that make it a companion
+
+- **The first screen is the whole product.** Lowest barrier to entry means the empty state is designed with the most care. A new user sees one clear, warm way in. Not a blank list and a plus button.
+- **Re-entry across days.** The user studies in pockets of time. The app holds the thread and welcomes the user back to where they were and the next step. Returning is a designed moment.
+- **The personal thread is the moat.** The app holds every Study the user has ever done. Over time it can notice a theme returning and offer the earlier thread. No other app can, because no other app is built for one person.
+- **Context must be trusted.** The moment the app states who wrote a book and why, the user is trusting it. Context shows its source. Invented history would destroy the app's authority. This forces context to be curated and bundled, which suits offline use anyway.
+- **The ending must land.** The workflow closes in prayer, which is the user's and not the app's. The app hands that moment over with weight. No confetti. A still, deliberate close.
+
+### 4.5 Positioning: why this is not another Bible app
+
+Every Bible app has already won a territory. Logos owns depth and charges a wall of complexity for it. YouVersion owns reach and hands everyone the same plan. He Reads Truth owns beauty and hands the user content that is theirs. Blue Letter Bible owns the free interlinear and feels like a dictionary. Lectio and Dwell own the gentle guided session with fixed content for everyone.
+
+None of them run a process on what the user brings and give it back as theirs. They are libraries to search or content to consume.
+
+This app is built for one person, and that is the whole moat.
+
+- A guide, not a library. It walks the user to the question instead of waiting for it.
+- The user's path, not everyone's plan. It forms around what God is stirring in the user now.
+- The user excavates, the user does not consume. It hands back the user's own revelation, grounded.
+- Depth with a door, not a wall. The same scholarship, surfaced one tap at a time.
+- It remembers the user's walk. It brings back the thread when a theme returns.
+
+In one line: every Bible app is built for everyone. This one is built for the user. It does not give the user the word. It walks with the user until the word is theirs, then gives the user back to God.
+
+It competes on a different axis. Not library size. Not reach. Intimacy and process, where the giants are too big to follow.
+
+### 4.6 Honest constraints to design within
+
+- **Haptics.** iOS Safari and iOS PWAs cannot trigger the Taptic engine. `navigator.vibrate` does nothing on iPhone. Feedback on iPhone comes from motion, timing, and optional sound. Responsive touch, satisfying transitions, a clean settle when a step completes. True buzz feedback is off the table while this is a PWA.
+- **Aesthetic.** The He Reads Truth standard is typography, whitespace, restraint, and strong imagery. All achievable with the current stack. No framework or build step required. Maps and infographics are static assets, made or sourced public domain.
+- **Context content is the real work.** Book level who, when, and why is sourceable from public domain material. Per passage context and teaching maps are curation, not a download. This is where the genuine effort goes, and where the app earns the gap the others leave.
+
+---
+
+## 5. Voice and Output Requirements
 
 The formatting engine (Phase 3) must produce words that sound like the user preaching, not like an essay. **These rules also apply to all generated text and to documentation in this repo.**
 
@@ -65,7 +140,7 @@ The formatting engine (Phase 3) must produce words that sound like the user prea
 
 ---
 
-## 5. Features by Phase
+## 6. Features by Phase
 
 ### Phase 1 — Core (DONE, shipped and verified on device 2026-06-04)
 - Note organiser with passage tagging. Capture raw notes and attach them to specific scriptures.
@@ -73,19 +148,29 @@ The formatting engine (Phase 3) must produce words that sound like the user prea
 - Persistent storage on the device. Nothing lost between sessions. Backup export and restore.
 - Book name auto-complete on passage entry. Swipe a card left to delete.
 
-### Phase 2 — Language Study (NEXT)
+### Phase 1.5 — The Experience Restructure (NEXT)
+This is the pivot from a notes app to a guided companion. See section 4 for the full blueprint.
+- Introduce the Study as the core object. Notes, passages, word studies, and links live inside a Study the user names.
+- Rebuild the home around Studies, with a designed empty state and a calm way in.
+- Re-entry: bring the user back to where they left off and the next step.
+- Progressive disclosure shell: the workflow becomes the spine, with doors that appear at the right moment rather than a menu of features.
+- Two modes on one engine: devotional and preparation.
+
+### Phase 2 — Language Study (word study exists; deepen and integrate)
+- Word study lookup already ships (search a term, for example agape). Integrate it into the Study flow so it surfaces as a door, not a separate dictionary.
 - Original language lookup per verse (Hebrew, Greek, Aramaic).
 - Root word definitions and how the word is used elsewhere in scripture.
 - Principle of first mention support: trace a word to its first appearance.
+- Book and passage context (who, when, why, how) with visible sources. Infographics and maps as static, curated assets.
 
 ### Phase 3 — Message Formatting
-- An assistant that takes raw notes and structures them into a flowing word in the user's voice, following all rules in section 4.
+- An assistant that takes raw notes and structures them into a flowing word in the user's voice, following all rules in section 5.
 - Iterative refinement: condense, re-tone, lock versions.
 - Always preserves the user's original insights and illustrations rather than overwriting them.
 
 ---
 
-## 6. Scripture and Language Data (licensing — important)
+## 7. Scripture and Language Data (licensing — important)
 
 - **ESV** has an official API but its licensing terms limit how much text can be stored and displayed. Check current terms before building around it.
 - **AMP and AMPC** are copyrighted (Lockman Foundation). They cannot be freely embedded. Plan for either licensed API access or manual entry of the specific passages being worked on.
@@ -94,7 +179,7 @@ The formatting engine (Phase 3) must produce words that sound like the user prea
 
 ---
 
-## 7. Non Goals and Guardrails
+## 8. Non Goals and Guardrails
 
 - It does not write sermons from a prompt. It develops what the user brings.
 - It does not replace reading, study, or prayer.
@@ -104,6 +189,6 @@ The formatting engine (Phase 3) must produce words that sound like the user prea
 
 ---
 
-## 8. Reference Example
+## 9. Reference Example
 
 The first full word built using this workflow was an intercession message titled "Strength for the Stretch", built from four passages (Isaiah 40:28-31, Galatians 5:22, 2 Corinthians 12:7-10, Hebrews 12:1-3) closing on 1 John 5:14-15. It moved through a loop: where we are going, how we assess ourselves, why we go through it, who sustains us. That session is the working model of what a finished output looks like and how the workflow should feel.
