@@ -1,0 +1,8 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+
+# Local backups exported from the app (personal study data — never commit)
+*-backup-*.json
+.gstack/

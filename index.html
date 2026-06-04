@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+  <title>Bible Study</title>
+
+  <meta name="description" content="A personal study companion that helps excavate the word." />
+  <meta name="theme-color" content="#10141f" />
+
+  <!-- iOS home screen behaviour -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Bible Study" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1 class="app-title">Bible Study</h1>
+    <button class="icon-btn" id="settingsBtn" aria-label="Settings">&#9881;</button>
+  </header>
+
+  <main id="main">
+    <!-- Notes view -->
+    <section class="view" id="view-notes">
+      <div class="list" id="notesList"></div>
+      <p class="empty" id="notesEmpty">No notes yet. Tap + to capture a thought.</p>
+    </section>
+
+    <!-- Passages view -->
+    <section class="view hidden" id="view-passages">
+      <div class="list" id="passagesList"></div>
+      <p class="empty" id="passagesEmpty">No passages yet. Add one, or tag a note with a passage.</p>
+    </section>
+  </main>
+
+  <button class="fab" id="fab" aria-label="Add">+</button>
+
+  <nav class="tabbar">
+    <button class="tab active" data-view="notes">
+      <span class="tab-label">Notes</span>
+    </button>
+    <button class="tab" data-view="passages">
+      <span class="tab-label">Passages</span>
+    </button>
+  </nav>
+
+  <!-- Sheet host -->
+  <div class="sheet-backdrop hidden" id="sheetBackdrop"></div>
+  <div class="sheet hidden" id="sheet" role="dialog" aria-modal="true"></div>
+
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
