@@ -35,6 +35,52 @@ async function findOrCreatePassage(refText) {
   return passage;
 }
 
+/* Remove a passage and tidy up after it: untag its notes, drop its links. */
+async function deletePassageCascade(id) {
+  const [notes, links] = await Promise.all([DB.notes.getAll(), DB.links.getAll()]);
+  for (const n of notes) if (n.passageId === id) { n.passageId = null; await DB.notes.put(n); }
+  for (const l of links) if (l.passageA === id || l.passageB === id) await DB.links.delete(l.id);
+  await DB.passages.delete(id);
+}
+
+/* Swipe a card left to delete it. onDelete runs on a decisive swipe and returns
+ * true if the item was removed (so the card can stay gone) or false to snap back. */
+function attachSwipeToDelete(card, onDelete) {
+  let startX = 0, startY = 0, dx = 0, dragging = false, decided = false, horizontal = false;
+  card.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    dx = 0; dragging = true; decided = false; horizontal = false;
+    card.style.transition = 'none';
+  }, { passive: true });
+  card.addEventListener('touchmove', (e) => {
+    if (!dragging) return;
+    const ddx = e.touches[0].clientX - startX;
+    const ddy = e.touches[0].clientY - startY;
+    if (!decided) { decided = true; horizontal = Math.abs(ddx) > Math.abs(ddy) + 4; }
+    if (!horizontal) return;
+    dx = Math.min(0, ddx);
+    card.style.transform = `translateX(${dx}px)`;
+    card.classList.toggle('swiping', dx < -10);
+    e.preventDefault();
+  }, { passive: false });
+  function end() {
+    if (!dragging) return;
+    dragging = false;
+    card.style.transition = 'transform 0.18s ease';
+    if (dx < -70) {
+      Promise.resolve(onDelete()).then((ok) => {
+        if (!ok) { card.style.transform = 'translateX(0)'; card.classList.remove('swiping'); }
+      });
+    } else {
+      card.style.transform = 'translateX(0)';
+      card.classList.remove('swiping');
+    }
+  }
+  card.addEventListener('touchend', end);
+  card.addEventListener('touchcancel', end);
+}
+
 /* ---------- sheets ---------- */
 
 function openSheet(title, bodyHtml) {
@@ -77,6 +123,12 @@ async function renderNotes() {
       <div class="note-body note-preview">${escapeHtml(n.body) || '<span class="mini">(empty)</span>'}</div>
       <div class="meta">${fmtDate(n.updatedAt || n.createdAt)}</div>`;
     card.addEventListener('click', () => openNoteSheet(n));
+    attachSwipeToDelete(card, async () => {
+      if (!confirm('Delete this note? This cannot be undone.')) return false;
+      await DB.notes.delete(n.id);
+      await refresh();
+      return true;
+    });
     list.appendChild(card);
   }
 }
@@ -97,6 +149,7 @@ async function openNoteSheet(existing) {
     <button class="btn primary" id="noteSave">${existing ? 'Save changes' : 'Save note'}</button>
     ${existing ? '<button class="btn danger" id="noteDelete">Delete note</button>' : ''}`;
   openSheet(existing ? 'Edit note' : 'New note', body);
+  attachBookAutocomplete($('#notePassage'));
 
   $('#noteSave').addEventListener('click', async () => {
     const text = $('#noteBody').value.trim();
@@ -145,6 +198,12 @@ async function renderPassages() {
       <span class="passage-ref">${escapeHtml(p.ref)}</span>
       <span class="passage-counts">${noteCount} note${noteCount === 1 ? '' : 's'}<br>${linkCount} link${linkCount === 1 ? '' : 's'}</span>`;
     card.addEventListener('click', () => openPassageSheet(p));
+    attachSwipeToDelete(card, async () => {
+      if (!confirm('Delete this passage? Its notes lose their tag and its links are removed.')) return false;
+      await deletePassageCascade(p.id);
+      await refresh();
+      return true;
+    });
     list.appendChild(card);
   }
 }
@@ -157,6 +216,7 @@ async function openNewPassageSheet() {
     </label>
     <button class="btn primary" id="newPassageSave">Add passage</button>`;
   openSheet('New passage', body);
+  attachBookAutocomplete($('#newPassageRef'));
   $('#newPassageSave').addEventListener('click', async () => {
     const ref = normRef($('#newPassageRef').value);
     if (!ref) { closeSheet(); return; }
@@ -211,9 +271,7 @@ async function openPassageSheet(passage) {
 
   $('#deletePassage').addEventListener('click', async () => {
     if (!confirm('Delete this passage? Notes attached to it will lose their tag, and its links will be removed.')) return;
-    for (const n of myNotes) { n.passageId = null; await DB.notes.put(n); }
-    for (const l of myLinks) await DB.links.delete(l.id);
-    await DB.passages.delete(passage.id);
+    await deletePassageCascade(passage.id);
     closeSheet();
     await refresh();
   });
@@ -231,6 +289,7 @@ async function openPrefilledNote(passage) {
     </label>
     <button class="btn primary" id="noteSave">Save note</button>`;
   openSheet('New note', body);
+  attachBookAutocomplete($('#notePassage'));
   $('#noteSave').addEventListener('click', async () => {
     const text = $('#noteBody').value.trim();
     const p = await findOrCreatePassage($('#notePassage').value);
@@ -264,6 +323,7 @@ async function openLinkSheet(passage) {
     </label>
     <button class="btn primary" id="linkSave">Link passages</button>`;
   openSheet('Link passage', body);
+  attachBookAutocomplete($('#linkNewRef'));
 
   $('#linkSave').addEventListener('click', async () => {
     let targetId = $('#linkTarget').value;

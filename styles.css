@@ -26,7 +26,16 @@ html, body {
   overscroll-behavior-y: none;
 }
 
-button { font-family: inherit; color: inherit; cursor: pointer; }
+button {
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+  touch-action: manipulation; /* removes the old ~300ms tap delay on mobile */
+}
+/* Instant pressed feedback so taps feel acknowledged */
+.btn:active, .tab:active, .icon-btn:active, .link-btn:active, .fab:active, .card:active, .ac-item:active {
+  filter: brightness(0.85);
+}
 
 /* Header */
 .app-header {
@@ -181,7 +190,7 @@ button { font-family: inherit; color: inherit; cursor: pointer; }
   display: flex;
   flex-direction: column;
   padding-bottom: env(safe-area-inset-bottom);
-  animation: sheet-up 0.22s ease-out;
+  animation: sheet-up 0.16s ease-out;
 }
 @keyframes sheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
@@ -258,4 +267,38 @@ select.text { appearance: none; }
   font-family: var(--serif);
   font-size: 14px;
   color: var(--parch);
+}
+
+/* Book auto-complete dropdown */
+.ac-wrap { position: relative; display: block; }
+.ac-list {
+  position: absolute;
+  left: 0; right: 0;
+  top: calc(100% + 4px);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 40;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+.ac-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  padding: 12px 14px;
+  font-family: var(--serif);
+  font-size: 15px;
+  color: var(--parch);
+}
+.ac-item:last-child { border-bottom: none; }
+
+/* Swipe-to-delete: reveal a red cue as a card slides left */
+.list .card { position: relative; }
+.list .card.swiping {
+  background: var(--surface-2);
+  box-shadow: -4px 0 0 0 var(--danger);
 }

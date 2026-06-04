@@ -1,13 +1,14 @@
 /* Offline support: cache the app shell so it opens with no internet.
  * Notes are not cached here. They live in IndexedDB on the device. */
 
-const CACHE = 'bsc-v1';
+const CACHE = 'bsc-v2';
 const ASSETS = [
   './',
   './index.html',
   './styles.css',
   './app.js',
   './db.js',
+  './books.js',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -28,9 +29,25 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
+
+  // Page loads: try the network first so updates land, fall back to cache offline.
+  if (req.mode === 'navigate') {
+    e.respondWith(
+      fetch(req).then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE).then((c) => c.put('./index.html', copy));
+        return res;
+      }).catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // Other assets: cache first for speed, fall back to network.
   e.respondWith(
-    caches.match(req).then((cached) => cached || fetch(req).catch(() => {
-      if (req.mode === 'navigate') return caches.match('./index.html');
-    }))
+    caches.match(req).then((cached) => cached || fetch(req).then((res) => {
+      const copy = res.clone();
+      caches.open(CACHE).then((c) => c.put(req, copy));
+      return res;
+    }).catch(() => undefined))
   );
 });
