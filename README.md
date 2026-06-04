@@ -4,6 +4,8 @@ A personal, phone-first Bible study companion. It excavates the word. It does no
 
 Built for one user. No accounts. No sharing. Notes live on the device.
 
+> **Working on this project (human or AI)?** Read [`AGENTS.md`](AGENTS.md) for how to work in the code, then [`docs/PROJECT-CONTEXT.md`](docs/PROJECT-CONTEXT.md) for the vision, philosophy, workflow, and voice rules. All context lives in the repo so any model can pick it up.
+
 ## What Phase 1 does
 
 - Capture a note (a theme, a fragment, a verse on your heart).
