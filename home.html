@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="theme-color" content="#10141f" />
+<title>Bible Study</title>
+
+<!-- Self-contained prototype of the front door. It does not touch the live app.
+     Open it on the phone to feel the entry: greeting, the two intents, the motion.
+     Theme matches styles.css. No haptics on iOS, so feedback is motion and timing. -->
+
+<style>
+  :root {
+    --bg: #10141f;
+    --surface: #1a2030;
+    --surface-2: #232b3d;
+    --text: #e8e6df;
+    --muted: #9aa0b0;
+    --gold: #d4a23c;
+    --parch: #f4ecd8;
+    --line: rgba(255, 255, 255, 0.08);
+    --serif: Georgia, "Times New Roman", serif;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* A faint warmth from the top, like dawn light on the page. */
+  body {
+    min-height: 100%;
+    background:
+      radial-gradient(120% 60% at 50% -10%, rgba(212, 162, 60, 0.10), transparent 60%),
+      var(--bg);
+  }
+
+  .screen {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding:
+      calc(env(safe-area-inset-top) + 14vh)
+      24px
+      calc(env(safe-area-inset-bottom) + 28px);
+  }
+
+  /* Greeting */
+  .greet { flex: 0 0 auto; }
+  .eyebrow {
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.85;
+    margin-bottom: 14px;
+  }
+  .hello {
+    font-family: var(--serif);
+    font-size: 34px;
+    line-height: 1.15;
+    color: var(--parch);
+    font-weight: 400;
+  }
+  .hello .name { display: block; }
+  .sub {
+    margin-top: 16px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--muted);
+    max-width: 22ch;
+  }
+
+  /* The two intents */
+  .choices {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .card {
+    position: relative;
+    text-align: left;
+    width: 100%;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 18px;
+    padding: 22px 22px 24px;
+    font: inherit;
+    overflow: hidden;
+    transition: transform 0.18s var(--ease), filter 0.18s var(--ease), border-color 0.18s var(--ease);
+  }
+  /* A thin gold seam down the spine of each choice. */
+  .card::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 14px; bottom: 14px;
+    width: 3px;
+    border-radius: 3px;
+    background: var(--gold);
+    opacity: 0.7;
+  }
+  .card:active {
+    transform: scale(0.975);
+    filter: brightness(0.92);
+    border-color: rgba(212, 162, 60, 0.35);
+  }
+  .card .label {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--parch);
+    margin-bottom: 6px;
+  }
+  .card .desc {
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+
+  .footer {
+    margin-top: 22px;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    opacity: 0.6;
+  }
+
+  /* Entrance: each piece rises and settles, staggered, so it feels intentional. */
+  .rise { opacity: 0; transform: translateY(14px); }
+  .in .rise { opacity: 1; transform: none; transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
+  .in .d1 { transition-delay: 0.05s; }
+  .in .d2 { transition-delay: 0.14s; }
+  .in .d3 { transition-delay: 0.30s; }
+  .in .d4 { transition-delay: 0.40s; }
+  .in .d5 { transition-delay: 0.52s; }
+
+  /* The "room" you are led into after a choice (placeholder for now). */
+  .room {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(120% 60% at 50% -10%, rgba(212, 162, 60, 0.10), transparent 60%),
+      var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 32px;
+    gap: 18px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s var(--ease);
+  }
+  .room.show { opacity: 1; pointer-events: auto; }
+  .room .room-eyebrow {
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .room .room-title {
+    font-family: var(--serif);
+    font-size: 30px;
+    color: var(--parch);
+  }
+  .room .room-note { color: var(--muted); font-size: 15px; max-width: 24ch; line-height: 1.5; }
+  /* A slow breath, so the holding screen feels alive, not stuck. */
+  .breath {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--gold);
+    margin-top: 6px;
+    animation: breathe 3.4s var(--ease) infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.35; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.45); }
+  }
+  .back {
+    margin-top: 18px;
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  .back:active { filter: brightness(0.85); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .in .rise, .room, .breath { transition: none; animation: none; }
+    .rise { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+  <main class="screen" id="screen">
+    <div class="greet">
+      <div class="eyebrow rise d1" id="eyebrow">Bible Study</div>
+      <h1 class="hello rise d2">
+        <span id="timeGreet">Good evening,</span>
+        <span class="name">Unathi.</span>
+      </h1>
+      <p class="sub rise d3">Two ways to begin. Choose the one you came for.</p>
+    </div>
+
+    <div class="choices">
+      <button class="card rise d4" data-room="Sit with God" data-mode="devotion">
+        <div class="label">Sit with God</div>
+        <div class="desc">A devotion. Meet him, and meet yourself.</div>
+      </button>
+      <button class="card rise d5" data-room="Prepare a word" data-mode="prepare">
+        <div class="label">Prepare a word</div>
+        <div class="desc">Build a teaching, grounded and in your voice.</div>
+      </button>
+    </div>
+
+    <div class="footer rise d5">Your study stays on your phone.</div>
+  </main>
+
+  <!-- The room you are led into. Placeholder until we design each mode. -->
+  <section class="room" id="room" aria-hidden="true">
+    <div class="room-eyebrow" id="roomEyebrow"></div>
+    <div class="room-title" id="roomTitle"></div>
+    <div class="breath"></div>
+    <p class="room-note">This room is coming next. You felt the door. We build the inside from here.</p>
+    <button class="back" id="back">Back</button>
+  </section>
+
+<script>
+  // Time-aware greeting so the entry feels alive, not generic.
+  (function () {
+    var h = new Date().getHours();
+    var g = "Good evening,";
+    if (h < 12) g = "Good morning,";
+    else if (h < 17) g = "Good afternoon,";
+    document.getElementById("timeGreet").textContent = g;
+  })();
+
+  // Play the entrance on the next frame so the transitions actually run.
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      document.body.classList.add("in");
+    });
+  });
+
+  // Choosing an intent leads you onward. Directed, not dropped in a blank.
+  var room = document.getElementById("room");
+  var roomTitle = document.getElementById("roomTitle");
+  var roomEyebrow = document.getElementById("roomEyebrow");
+
+  document.querySelectorAll(".card").forEach(function (card) {
+    card.addEventListener("click", function () {
+      roomTitle.textContent = card.dataset.room;
+      roomEyebrow.textContent = card.dataset.mode === "devotion" ? "Devotion" : "Preparation";
+      room.classList.add("show");
+      room.setAttribute("aria-hidden", "false");
+    });
+  });
+
+  document.getElementById("back").addEventListener("click", function () {
+    room.classList.remove("show");
+    room.setAttribute("aria-hidden", "true");
+  });
+</script>
+</body>
+</html>
